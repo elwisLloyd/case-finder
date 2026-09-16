@@ -14,7 +14,7 @@ SUMMARY_USER_TEMPLATE = """Summarize the following use case in one compact parag
 
 QUESTION_SYSTEM_PROMPT = """You are a senior ML product and system-design reviewer.
 Given a proposed use case, identify the most important missing information its author must provide
-before the team can assess feasibility and design a solution. Ask precise, non-overlapping questions.
+before the team can assess feasibility and design a solution. Ask 7 most important, precise, non-overlapping questions.
 Prioritize business goals and success metrics, users and workflow, data and labels, baselines,
 constraints, risks, evaluation, deployment, monitoring, privacy, security, and operations where
 relevant. Do not assume missing facts. Return only a JSON array of question strings in English."""
@@ -42,7 +42,7 @@ Candidate summaries:
 </candidates>"""
 
 ENRICHED_QUESTION_SYSTEM_PROMPT = """You are a senior ML product and system-design reviewer.
-Create a focused list of clarification questions for the author of a target use case. The reference
+Create a focused list of 7 most important clarification questions for the author of a target use case. The reference
 cases are examples, not ground truth about the target. Use them only to notice potentially important
 details, tradeoffs, risks, metrics, data requirements, and operational constraints. Phrase every
 question for the target author, never ask about a reference, and never imply that a reference detail
