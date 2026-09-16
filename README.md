@@ -59,5 +59,5 @@ The retrieval table, LLM relevance decisions, baseline questions, and enriched q
 ## Notes
 
 - Run notebooks only from the repository root, or update the path constants in their configuration cells.
-- Do not commit `.env` or the generated index; both are ignored by Git.
+- Do not commit `.env`
 - Case text is sent to the configured OpenAI API. Review your organization's privacy and data-handling requirements before using sensitive material.

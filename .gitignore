@@ -2,4 +2,3 @@
 .venv/
 __pycache__/
 .ipynb_checkpoints/
-data/train/train_index.csv
