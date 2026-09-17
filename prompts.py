@@ -58,3 +58,27 @@ Relevant reference cases:
 <reference_cases>
 {reference_cases}
 </reference_cases>"""
+
+QUESTION_LIST_EVALUATION_SYSTEM_PROMPT = """You are the customer who commissioned an ML or AI
+solution and is reviewing two lists of clarification questions. Decide which list seems more
+professional and demonstrates a better understanding of the substance of the task. Judge only the
+quality, relevance, specificity, coverage, and usefulness of the questions. The list labels and
+order are randomized and reveal nothing about how the lists were produced. Return only one JSON
+object with exactly two fields: \"winner\", whose value is \"A\", \"B\", or \"tie\"; and \"reason\",
+containing a concise explanation in English. Choose \"tie\" only when neither list is meaningfully
+better overall."""
+
+QUESTION_LIST_EVALUATION_USER_TEMPLATE = """Original use case:
+<use_case>
+{case_text}
+</use_case>
+
+Question list A:
+<list_a>
+{list_a}
+</list_a>
+
+Question list B:
+<list_b>
+{list_b}
+</list_b>"""
