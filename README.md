@@ -56,6 +56,15 @@ First build the index. Then open `find-case.ipynb`, replace `USE_CASE_TEXT` in t
 
 The retrieval table, LLM relevance decisions, baseline questions, and enriched questions remain available as notebook variables for inspection. If no candidate passes relevance filtering, the enriched stage still runs with an explicit statement that no relevant reference was found.
 
+The final section evaluates the two approaches on every Markdown file in `data/test/files/`.
+For each case it generates both question lists, randomly presents them as lists A and B to an LLM
+acting as the customer, and records which list appears more professional and demonstrates better
+understanding of the task. Brief per-case results are appended to
+`data/evaluation/question_list_evaluation_brief.csv`; complete questions, randomized label mapping,
+and evaluator comments are appended to `data/evaluation/question_list_evaluation_detailed.jsonl`.
+The aggregate output reports enriched and baseline wins, ties, and a one-sided exact binomial test
+of whether the enriched approach wins more often. Ties are reported and excluded from that test.
+
 ## Notes
 
 - Run notebooks only from the repository root, or update the path constants in their configuration cells.
