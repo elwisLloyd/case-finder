@@ -14,6 +14,7 @@ The second path summarizes and embeds the input, retrieves five nearest summarie
 - `prompts.py` contains every LLM prompt in English and is shared by both notebooks.
 - `data/train/files/` contains the training cases as Markdown files.
 - `data/train/train_index.csv` is generated locally and contains `id`, `summary`, and `embedding` columns.
+- `server/` contains the Docker Compose-based FastAPI service and its deployment instructions.
 
 ## Setup
 
