@@ -73,6 +73,10 @@ app = FastAPI(
     description="Generate baseline and similar-case-enriched clarification questions.",
     version="1.0.0",
 )
+# Swagger UI currently renders arrays of binary values as editable strings when
+# the schema uses OpenAPI 3.1.  OpenAPI 3.0 describes the same multipart field
+# in a form that Swagger UI recognizes as a multiple-file picker.
+app.openapi_version = "3.0.3"
 
 
 @app.middleware("http")
@@ -112,6 +116,10 @@ async def start_process(
     _: Annotated[str, Depends(authenticate)],
     settings: Annotated[Settings, Depends(get_settings)],
     store: Annotated[JobStore, Depends(get_store)],
+    files: Annotated[
+        list[UploadFile],
+        File(description="One or more .txt, .md, .docx, or .pdf files"),
+    ],
     text: Annotated[str, Form()] = "",
     question_count: Annotated[int, Form(ge=1)] = 7,
     language: Annotated[str, Form(min_length=1, max_length=50)] = "English",
