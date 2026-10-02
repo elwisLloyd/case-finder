@@ -15,4 +15,5 @@ def test_start_process_exposes_file_picker_in_openapi():
     files_schema = form_schema["properties"]["files"]
     assert files_schema["type"] == "array"
     assert files_schema["items"] == {"type": "string", "format": "binary"}
+    assert "default" not in files_schema
     assert "files" not in form_schema.get("required", [])

@@ -115,7 +115,7 @@ async def start_process(
     text: Annotated[str, Form()] = "",
     question_count: Annotated[int, Form(ge=1)] = 7,
     language: Annotated[str, Form(min_length=1, max_length=50)] = "English",
-    files: Annotated[list[UploadFile], File()] = [],
+    files: list[UploadFile] = File(default_factory=list),
 ) -> UploadResponse:
     if question_count > settings.max_question_count:
         raise HTTPException(
