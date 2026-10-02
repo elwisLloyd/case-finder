@@ -66,7 +66,9 @@ http://localhost:8000/docs
 `POST /start_process` принимает `multipart/form-data`:
 
 - `text` — необязательный текст;
-- `files` — до 10 файлов `.txt`, `.md`, `.docx` или `.pdf`; `.doc` не поддерживается;
+- `file_1` … `file_10` — необязательные файлы `.txt`, `.md`, `.docx` или `.pdf`;
+  отдельные поля нужны, чтобы Swagger UI показывал кнопку выбора файла;
+  `.doc` не поддерживается;
 - `question_count` — число вопросов, по умолчанию 7, максимум 50;
 - `language` — язык итоговых вопросов, по умолчанию `English`.
 
@@ -78,7 +80,7 @@ PDF обрабатывается без OCR. У сканированного PDF
 curl -u 'admin:replace-with-a-strong-password' \
   -X POST http://localhost:8000/start_process \
   -F 'text=Нужно классифицировать обращения клиентов' \
-  -F 'files=@requirements.docx' \
+  -F 'file_1=@requirements.docx' \
   -F 'question_count=10' \
   -F 'language=Russian'
 ```

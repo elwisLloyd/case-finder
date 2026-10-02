@@ -115,8 +115,33 @@ async def start_process(
     text: Annotated[str, Form()] = "",
     question_count: Annotated[int, Form(ge=1)] = 7,
     language: Annotated[str, Form(min_length=1, max_length=50)] = "English",
-    files: list[UploadFile] = File(default_factory=list),
+    file_1: Annotated[UploadFile | None, File(description="File 1")] = None,
+    file_2: Annotated[UploadFile | None, File(description="File 2")] = None,
+    file_3: Annotated[UploadFile | None, File(description="File 3")] = None,
+    file_4: Annotated[UploadFile | None, File(description="File 4")] = None,
+    file_5: Annotated[UploadFile | None, File(description="File 5")] = None,
+    file_6: Annotated[UploadFile | None, File(description="File 6")] = None,
+    file_7: Annotated[UploadFile | None, File(description="File 7")] = None,
+    file_8: Annotated[UploadFile | None, File(description="File 8")] = None,
+    file_9: Annotated[UploadFile | None, File(description="File 9")] = None,
+    file_10: Annotated[UploadFile | None, File(description="File 10")] = None,
 ) -> UploadResponse:
+    files = [
+        upload
+        for upload in (
+            file_1,
+            file_2,
+            file_3,
+            file_4,
+            file_5,
+            file_6,
+            file_7,
+            file_8,
+            file_9,
+            file_10,
+        )
+        if upload is not None
+    ]
     if question_count > settings.max_question_count:
         raise HTTPException(
             status_code=422,
