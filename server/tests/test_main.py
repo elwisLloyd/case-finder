@@ -4,6 +4,9 @@ from app.main import app
 def test_start_process_exposes_file_picker_in_openapi():
     schema = app.openapi()
 
+    # Swagger UI treats an array of binary strings as a multiple-file input in
+    # OpenAPI 3.0, but renders it as "Add string item" in OpenAPI 3.1.
+    assert schema["openapi"] == "3.0.3"
     assert "/start_process" in schema["paths"]
     assert "/upload_info" not in schema["paths"]
 
