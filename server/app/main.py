@@ -104,20 +104,19 @@ async def request_logging(request: Request, call_next):
 
 
 @app.post(
-    "/upload_info",
+    "/start_process",
     response_model=UploadResponse,
     status_code=status.HTTP_202_ACCEPTED,
 )
-async def upload_info(
+async def start_process(
     _: Annotated[str, Depends(authenticate)],
     settings: Annotated[Settings, Depends(get_settings)],
     store: Annotated[JobStore, Depends(get_store)],
     text: Annotated[str, Form()] = "",
     question_count: Annotated[int, Form(ge=1)] = 7,
     language: Annotated[str, Form(min_length=1, max_length=50)] = "English",
-    files: Annotated[list[UploadFile] | None, File()] = None,
+    files: Annotated[list[UploadFile], File()] = [],
 ) -> UploadResponse:
-    files = files or []
     if question_count > settings.max_question_count:
         raise HTTPException(
             status_code=422,

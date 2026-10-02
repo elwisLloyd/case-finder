@@ -63,7 +63,7 @@ http://localhost:8000/docs
 
 ### Создать задание
 
-`POST /upload_info` принимает `multipart/form-data`:
+`POST /start_process` принимает `multipart/form-data`:
 
 - `text` — необязательный текст;
 - `files` — до 10 файлов `.txt`, `.md`, `.docx` или `.pdf`; `.doc` не поддерживается;
@@ -76,7 +76,7 @@ PDF обрабатывается без OCR. У сканированного PDF
 
 ```bash
 curl -u 'admin:replace-with-a-strong-password' \
-  -X POST http://localhost:8000/upload_info \
+  -X POST http://localhost:8000/start_process \
   -F 'text=Нужно классифицировать обращения клиентов' \
   -F 'files=@requirements.docx' \
   -F 'question_count=10' \
