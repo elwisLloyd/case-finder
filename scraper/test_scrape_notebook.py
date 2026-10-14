@@ -22,14 +22,52 @@ class NotebookTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         notebook = json.loads(Path(__file__).with_name('scrape_use_cases.ipynb').read_text())
         code = '\n'.join(''.join(c['source']) for c in notebook['cells']
-                         if c['cell_type'] == 'code' and not ''.join(c['source']).startswith(('%pip', 'counts = await')))
+                         if c['cell_type'] == 'code' and not ''.join(c['source']).startswith(('%pip', 'counts = await', 'import subprocess')))
         self.ns = {}
         with patch.dict(sys.modules, {'trafilatura': types.SimpleNamespace(extract=lambda data, **kw: data.decode()),
                                       'pymupdf': types.SimpleNamespace()}):
             exec(compile(code, 'notebook', 'exec'), self.ns)
         root = Path(self.tmp.name)
         self.ns.update(BASE_DIR=root, CSV_PATH=root / 'input.csv', OUTPUT_DIR=root / 'scraped',
-                       LOG_PATH=root / 'log.csv', REQUEST_PAUSE=0)
+                       LOG_PATH=root / 'log.csv', REQUEST_PAUSE=0, USE_BROWSER=False)
+
+    def test_403_browser_success_failure_and_disabled(self):
+        with self.ns['CSV_PATH'].open('w', encoding='utf-8', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Title', 'Link'])
+            writer.writerow(['Blocked article', 'https://example.org/blocked'])
+        request = httpx.Request('GET', 'https://example.org/redirected')
+        response = httpx.Response(403, request=request)
+        def blocked(client, url):
+            raise httpx.HTTPStatusError('Forbidden', request=request, response=response)
+        self.ns['fetch'] = blocked
+        calls = []
+        async def browser(url):
+            calls.append(url)
+            return 'article text ' * 100, 'https://example.org/final'
+        self.ns['browser_text'] = browser
+        self.ns.update(USE_BROWSER=True, RESUME=False)
+        self.assertEqual(asyncio.run(self.ns['run']())['успешно'], 1)
+        self.assertEqual(calls, ['https://example.org/redirected'])
+        with self.ns['LOG_PATH'].open(encoding='utf-8-sig') as f:
+            self.assertEqual(list(csv.DictReader(f))[-1]['final_url'], 'https://example.org/final')
+        async def denied(url):
+            raise ValueError('HTTP 403 in browser')
+        self.ns['browser_text'] = denied
+        self.assertEqual(asyncio.run(self.ns['run']())['ошибка'], 1)
+        with self.ns['LOG_PATH'].open(encoding='utf-8-sig') as f:
+            self.assertIn('браузерная попытка не удалась', list(csv.DictReader(f))[-1]['error'])
+        calls.clear()
+        self.ns.update(USE_BROWSER=False, browser_text=browser)
+        self.assertEqual(asyncio.run(self.ns['run']())['ошибка'], 1)
+        self.assertEqual(calls, [])
+
+    def test_captcha_not_saved(self):
+        with self.ns['CSV_PATH'].open('w', encoding='utf-8', newline='') as f:
+            f.write('Title,Link\nBlocked,https://example.org/article\n')
+        self.ns['fetch'] = lambda client, url: ('html', b'Verify you are human CAPTCHA', url)
+        self.assertEqual(asyncio.run(self.ns['run']())['ошибка'], 1)
+        self.assertEqual(list(self.ns['OUTPUT_DIR'].glob('*.md')), [])
 
     def client(self, handler):
         return httpx.Client(transport=httpx.MockTransport(handler), follow_redirects=True)
