@@ -1,0 +1,33 @@
+# How DoorDash Quickly Spins Up Multiple Image Recognition Use Cases
+
+Источник: https://doordash.engineering/2021/11/03/how-doordash-quickly-spins-up-multiple-image-recognition-use-cases/
+
+DoorDash has rich image data collected by Dashers, our delivery drivers, that we use in a number of use cases. We can use this wealth of data for a number of things, including to check whether pizza bags are properly equipped, stores are closed, or catering has been set up, among many other possibilities. With the large volume of image data that comes in daily, it’s impossible for humans to examine images manually and confirm the information associated with them. It is therefore critical to create an automated, responsive, and reusable solution to extract important information from the images to advance use cases across myriad domains from logistics to fraud.
+In the past, DoorDash relied on third-party vendors to analyze incoming image data in a slow, expensive, and largely unscalable process. Our current image recognition solution described here enables us to spin up new use case models quickly, efficiently, inexpensively, and at scale.
+In-house image processing sets new standards
+Creating a DoorDash-centric image recognition solution mitigates multiple concerns created while working with third-party vendors, including:
+- Seamless integration with existing in-house image data sources and services
+- Fast analysis and data wipes of sensitive consumer information which privacy regulations require the company to jettison within a matter of days
+- Fast data transfer to keep use cases fresh and manage additional privacy concerns
+- Reduced costs and rapid scalability to manage growing internal demands as DoorDash grows its business lines
+From an engineering perspective, an in-house solution is straightforward to maintain and can easily be extended and improved with more advanced machine learning models, a faster data pipeline, and more robust support across multiple services.
+A light-weight solution keeps us nimble
+Once the decision was made to build an in-house solution, we sought a balance between the traditional heavy-handed team approach to building sophisticated models and a streamlined rapid iteration solution. Typical image recognition solutions require plentiful labeled data to feed into the model and comprehensive work conducted by data engineers to bring the model into production.
+At DoorDash, however, we value fast iteration and immediate outcomes (it’s in the name after all!), so we opted for a lightweight solution that could be brought up to speed fast. Rather than putting time and resources into over-complicated model tuning, we have adopted transfer learning, leveraging pre-trained computer vision models with our own labeled data for model training. Those models are then integrated into daily extract-transform-load, or ETL, jobs for real-time systems to test the effectiveness and online accuracy.
+Our solution: Build a deep neural network pipeline
+Our deep neural network pipeline (as shown in Fig. 1) evolves through the following steps:
+- We train image recognition models with limited labeled data, using ResNet as a backbone network. We balance the data set by selecting images from evenly distributed classes while also applying image pre-processing and data augmentation.
+- We productionalize models into the business quickly, regardless of the use case origin. Depending on the case, we leverage daily ETL or a real-time prediction service to host the trained model and save outputs to tables that can be used by downstream services.
+- We continuously monitor model performance through model tracking dashboards that record performance and predict job status. Because some data is time-sensitive, we maximize use of the raw images to extract information quickly and efficiently.
+How to select appropriate business problems
+As the business grows in both depth and breadth, new use cases arise broadly from many different teams who want to use the system to solve their problems. Although the pipeline moves quickly toward solutions, it’s important to prioritize which use cases should be on boarded first. DoorDash has established a few simple questions and rules to identify the most compelling cases:
+- Does the use case have a significant business impact for the company?
+  - Not all interesting business problems are equally important. Use cases that can generate profit or reduce costs become the top priority. For example, we use this solution to recognize pizza bags so that our dispatching system can assign pizza orders to those Dashers who have suitable equipment, leading to better consumer experiences.
+- Can the problem be solved using an image classification model?
+  - In some use cases, image data must be combined with other data to enhance the solution. For example, some Dashers fraudulently report a store closure by uploading a fake storefront image and then collecting half of the delivery fee. Our image recognition solution can compare a proper storefront against the Dasher’s submitted image and use real-time GPS information to discern whether the Dasher is at the correct store location.
+- Do we have annotated data for training?
+  - Business partners seeking to use the solution must provide label definitions with real images to facilitate training.
+Three affirmative answers will lead to onboarding a new use case, which can be completed within a few weeks’ time. When we partner with an internal business team to onboard a new use case, who needs a deep learning use case, we first run a pilot, including model building and testing. If the partner is satisfied with overall performance, we move the model into full production and feed its prediction data into downstream services.
+Identifying the best audiences for light-weight image solutions
+Companies eager to incorporate the image data generated from their daily operations frequently are stuck using third-party vendors because they lack a platform and the knowledge to conduct image processing themselves. A lightweight system similar to DoorDash’s can reduce costs, speed problem solving, streamline product integration, and standardize data and use cases across teams.
+By developing an image processing solution capable of rapid iterations and quick turn-arounds, companies can avoid bringing on a dedicated computer vision or data engineering team. DoorDash’s lightweight and reusable pipeline is ideal for quickly testing proofs-of-concept with business partners across a variety of functions. In fact, after the first use case took advantage of the solution, three more cases quickly were ready to be onboarded.

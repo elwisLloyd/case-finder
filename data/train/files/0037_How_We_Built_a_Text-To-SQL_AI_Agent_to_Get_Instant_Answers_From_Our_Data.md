@@ -1,0 +1,63 @@
+# How We Built a Text-To-SQL AI Agent to Get Instant Answers From Our Data
+
+Источник: https://www.salesforce.com/blog/text-to-sql-agent/
+
+If you’ve worked with data products in the world before AI data analysis, you know the drill: a project manager or analyst has an important question, but getting the answer means using Structured Query Language (SQL), a language for querying databases. Without innovative tools like a text-to-SQL Slack agent, engineers and data scientists become gatekeepers to the data, since many teams don’t have the technical knowledge to work with SQL.
+This creates a data access gap. Non-technical people have questions, but not answers, and decisions slow down due to a backlog of support requests. (Even worse, people start making decisions using old data or best guesses.) Engineers and data scientists spend their time writing queries and fetching data instead of building high-value features.
+This gap prevented us from scaling.
+Business Intelligence dashboards in products like Tableau can narrow this gap, but these dashboards take engineering time to build and they rarely cover every question a user might have.
+Our team asked: What if our users could ask natural-language questions and get insights from the data immediately, without waiting for technologists?
+That vision of democratized access to instant answers – combined with advancements in AI tools like large language models – led to a new relationship between our users and the data.
+Say hello to Data Cloud
+Data Cloud, the hyperscale data platform built into Salesforce, unlocks and harmonizes data from any system — so you can better understand your customers and grow your business.
+Closing the gap with AI data analysis
+To close this gap, we needed to rethink how our users got insight from our data. SQL is incredible as a structured syntax for accessing data, but it’s not how most people think or express themselves. It’s literally like learning another language. Not everyone in our company should have to learn it to get their jobs done.
+But advancements in Large Language Models have made it possible for machines to understand natural language questions and generate SQL with surprising accuracy. Users can simply ask, “How much did my service cost last month?” and an AI agent can look at the database tables and generate a SQL query that provides the answer.
+This approach democratizes data: Non-technical users can ask their questions in plain English and get real-time insights without hopping over to a business intelligence tool and drilling through filters or waiting in a support channel for an engineer.
+And here at Salesforce, our users live in Slack. They want to be able to ask questions about data without switching tools. In addition to supporting collaboration through threaded conversations and offering a searchable history for easy access to past insights, Slack also provides the interactive elements (buttons, list menus, etc) needed for a fully-featured application. As a result, choosing Slack as the medium for this natural-language experience was an easy decision. 
+With the concept of AI data analysis clear, we set out to build our solution: an internal text-to-SQL Slack agent, which we call Horizon Agent. The goal? To make it easy for people to use Slack to ask data questions in everyday language and instantly get back the SQL, the answer, and the context they need to make confident decisions – right in the flow of their work.
+Horizon Agent isn’t something we sell – it’s an internal tool we built to help our own teams move faster. If you’re looking for ways to close the data access gap in your organization, Salesforce offers external solutions like Agentforce and Data Cloud, which help teams turn natural language into action and unlock insights from data at scale.
+Lessons from building a text-to-SQL Slack agent
+Here’s a look at how we built Horizon Agent using Slack and a mix of internal Salesforce tech. We’ll also share what we learned along the way.
+Tech stack and architecture
+UX
+We built the Slack app using Bolt, Slack’s Python framework for app development. This framework handles Slack API interactions and lets you focus on the real business value. When a user messages our Horizon Agent app in Slack, Slack makes a call to our Python microservice in AWS and Bolt lets us handle the call easily.
+Business context
+We loaded all our business context and SME knowledge into Fack, an open-source tool created by Salesforce. This gave us an encyclopedia of Salesforce terms, concepts, ideas, and business jargon, as well as instructions about how to construct valid SQL queries using the Trino dialect.
+Dataset information
+The Horizon Data Platform is our internal data platform product, similar to industry equivalents like Data Build Tool (dbt). Using HDP, we document the business use of a database table and sample SQL queries that demonstrate access patterns for the data. HDP enriches this metadata with sample records from the table so that a Large Language Model (LLM) can see examples of real data.
+Einstein
+The Einstein Gateway is Salesforce’s internal platform for accessing LLMs. When our microservice receives a user’s question, it uses Retrieval-Augmented Generation (RAG) to enrich the user’s question with business context from Fack and dataset information from Horizon Data Platform. All that knowledge is bundled together and passed to a LLM through the Einstein Gateway, and we get our response back.
+Boost your productivity and ROI with LLMs
+Large language models (LLMs) underpin the growth of generative AI. See how they work, how they’re being used, and why they matter for your business.
+To put it all together, here’s an example interaction with Horizon Agent:
+- The user asks a question in Slack. (e.g. “Hey @Horizon, what was the cost of my service in September?”)
+- Our Bolt-based Python microservice receives the message and uses an LLM through Einstein to identify the message as a cost-related question.
+- The app retrieves business context and dataset information from Fack and Horizon Data Platform to supplement the user’s question with everything an LLM needs to answer the question.
+- The app uses the Einstein Gateway to submit the enriched user question to an LLM, which processes the question and returns a SQL query, as well as an explanation of the query that increases our users’ trust in the answer.
+- The user receives the answer in Slack within a few seconds. The user can ask follow-up questions, like “Can you break the cost out by AWS service?” and Horizon Agent will continue the conversation with all of the context of previous messages.
+- The user can also run the query, in which case our app executes the SQL query using Trino, retrieves the data from our Iceberg data lake, and posts that data back to Slack with an analysis of the major features of the data – summary, patterns, trends, anomalies, etc.
+What we learned
+Horizon Agent entered Early Access in August of 2024, and achieved a GA release in January of 2025. We’ve been iterating on it ever since. Here are some key things we learned.
+AI = faster decisions and happier users
+The time savings and agility of using AI data analysis is a clear win. Our technologists used to spend dozens of hours per week working on custom queries for our users, and our users spent the same amount of time waiting. Now our users can self-serve answers from our text-to-SQL Slack agent in minutes, and our technologists are freed up to build the high-value features of tomorrow.
+Meet your customers where they live
+An early prototype of Horizon Agent was a local-only experience using Streamlit. It was a great start, but since it wasn’t accessible where our users spend their time (Slack), it didn’t get adopted. When we shipped an MVP to Slack, people started using it – even though the responses weren’t perfect. Once users started trying it out, that led to feedback, and feedback leads to targeted investments. It was a virtuous cycle.
+Transparency leads to trust
+Initially, Horizon Agent didn’t explain what it was doing. We thought it would confuse users, since they didn’t know SQL. Often, it would just say “I don’t know how to answer that.” Conversation over. Later, we loosened up our guardrails and made the Agent more transparent. Instead of saying “no”, it asked clarifying questions. We also had it explain the SQL it generated. This transparency made the answers more trustworthy and less like a black box. It also helped our users learn a bit about SQL as they went, and get better at asking questions.
+Solve for agility
+Horizon Agent didn’t have perfect results from day one. At launch we only had the correct response ~50% of the time. Ambiguity in language is a major challenge – machines can be taught to think in human terms, but humans change. New terms and acronyms arise, and we needed Horizon Agent to keep pace with reality. We streamlined our process for updating the Agent’s knowledge base, so that if the Agent is confused by a user’s question we can have its knowledge base updated in ~15 minutes with automated regression testing to make sure our change isn’t making things worse. Our users appreciated the continuous improvement.
+Consistent accuracy is key
+Another challenge was delivering consistently correct results. By nature, LLMs are non-deterministic – even with a perfect knowledge base, if you ask a question 10 times, you might get 8 correct answers and 2 wrong ones. We switched from giving the LLM one chance to generate a SQL query to 10 chances, and we use a sequence of algorithms (Cosine Similarity Modeling and Levenshtein Distance) to eliminate outliers and select the response that best represents the majority consensus. We also pre-check all SQL queries by running a simple EXPLAIN query, and feed errors back to the Agent so it can take another crack at generating a correct query.
+Accelerate your team today with Agentforce in Slack
+Agents become teammates with Agentforce in Slack. Powered by relevant conversations in Slack and your trusted enterprise data, Agentforce will suggest and take action right in the flow of work.
+Shaping the future of data-driven work
+Horizon Agent points to a future of AI data analysis that is conversational, not siloed in a BI tool or gated by having a deep knowledge of SQL. Getting insight can be as easy as pinging a text-to-SQL Slack agent. With AI, humans will be able to integrate data-driven questions into their moment-to-moment work – making decisions, brainstorming, etc.
+Achieving this future is partly about technology (we couldn’t have built Horizon Agent a few years ago), but also the table-stakes of building good products: trust and expertise.
+You may be very bullish about the AI-assisted future; users might be skeptical. That’s a healthy push-pull relationship. Getting everyone on the same page requires effort. We had to collect feedback, observe our users’ interaction with Horizon Agent, and prioritize quick iterations when we saw bad behaviors and mistakes. There’s still much to improve here, but by being open about the issues and demonstrating an urgency to improve, we got our users to come on that journey with us.
+And even if Horizon Agent could perfectly answer every question a user has, there’s still going to be a need for engineers and data scientists, just in a different way. Instead of being the gatekeepers to data and trying to handle the ever-growing line of users waiting to get through the doors, engineers and data scientists become guides to a next generation of AI-powered tooling that needs their human expertise to assemble high-quality datasets and define the right guardrails.
+Conclusion: From gatekeepers to guides
+Horizon Agent was a huge shift for how we think about data access.
+We started off with a bottlenecked system where engineers and data scientists were the gatekeepers, even if they didn’t want to be. Now, with conversational AI handling routine questions, those same technologists are freed up to be guides and enable a democratized access to insights from data. At the same time, non-technical users get to enjoy instant, conversational access to data.
+Ultimately, Horizon Agent allowed us to turn a data access gap into an opportunity to move toward a new way of working. It demonstrated how AI is ready for prime time and integration into daily work. The next time someone needs an answer to a question, they can get what they need instantly, and we can accelerate the rate of our decision making to stay competitive in a difficult environment.
+No “How to Learn SQL” courses, no waiting, no open support tickets. Just trusted answers, immediately, using AI data analysis.

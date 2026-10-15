@@ -1,0 +1,32 @@
+# Moderating Inappropriate Video Content at Yelp
+
+Источник: https://engineeringblog.yelp.com/2024/03/moderating-inappropriate-video-content-at-yelp.html
+
+Moderating Inappropriate Video Content at Yelp
+- 
+        
+  Prateek Yadav, Machine Learning Engineer
+- Mar 27, 2024
+One of Yelp’s top priorities is the trust and safety of our users. Yelp’s platform is most well-known for its reviews, and its moderation practices have been recognised in academic research for mitigating misinformation and building consumer trust. In addition to reviews, Yelp’s Trust and Safety team takes significant measures when it comes to protecting its users from inappropriate material posted through other content types. This blog post discusses how Yelp protects its users from inappropriate content in videos.
+Videos at Yelp
+Recently, Yelp revamped its review experience by giving users the ability to upload videos alongside their review text. This has led to a significant increase in the total number of videos uploaded to the platform.
+Videos provide an immersive way to capture and share our experiences. However, this also opens the door to bad actors who may attempt to post disturbing videos to the platform. While such content is very rarely posted on Yelp’s platform, examples of such videos include:
+- Nudity, sexual activity and suggestive material
+- Intense violence, graphic gore and disturbing scenes
+- Extremist imagery and hate symbols
+It is extremely important to Yelp to proactively prevent such videos from being displayed to users on our platform, which protects consumers and businesses alike.
+AI for Video Moderation
+Yelp has been committed to providing more value to consumers and businesses by leveraging AI. We recently announced how we are rapidly expanding the use of neural networks to enhance ad relevance, search quality, and wait time estimates, among many others. AI-based systems also play a key role at Yelp to detect inappropriate content across various content types, from reviews to photos. Videos are no exception.
+Human Moderators
+Any machine learning model will have a non-zero chance to classify a legitimate video as inappropriate. This is known as the false positive rate. On the other hand, a model’s recall — in this case the measure of how well it can correctly flag a problematic video — should be maximized. There is always a tradeoff between keeping the recall high and false positive rate low. While flagging and removing inappropriate content as swiftly as possible is extremely important, any model that incorrectly removes legitimate content can be extremely frustrating to users and can discourage them from actively participating on the platform. Therefore, in order to maintain a high recall and effectively handle false positives, we include human evaluation of flagged videos as part of our moderation pipeline.
+Yelp’s User Operations team strives to review flagged videos and promptly restore any false positives to enforce the Content Guidelines in a fair and effective manner. However, manual moderation can be time consuming and difficult to scale. On top of that, dealing with large volumes of false positives can be frustrating for employees. Therefore, even with human moderators in the loop, an effective content moderation system should keep the number of false positives to a minimum.
+The Solution Design
+When a video is uploaded to the platform, the moderation pipeline kicks off in parallel to the video ingestion system. The video first gets checked by our matching service, which computes similarity hashes against other videos that were previously removed for violating content guidelines. Matched videos get automatically discarded, which helps manage overall moderation volume by blocking submissions from repeat offenders.
+Videos that pass the check are then fed to a deep learning model, which returns a multi-label classification. If the classification scores are above our thresholds, the videos are hidden and sent to the User Operations team for review. These thresholds are carefully fine-tuned to keep false positives at a minimum, while still catching and flagging inappropriate content. Inappropriate videos are removed, whereas the ones that were incorrectly flagged are restored.
+Moderating videos presents its own unique set of challenges. Videos are much larger in size than other common content types such as reviews and photos. As a result, it takes a lot more time to process and feed them through a neural network. However, it is important to have near real-time classification to remove inappropriate content as quickly as possible. One solution to this challenge includes simply reducing the number of videos going through the neural network by pre-emptively blocking uploads from users with suspicious activity patterns.
+Another strategy to overcome this problem involves selectively sampling frames to pass through the deep learning model instead of passing all video frames. We ran experiments to find the optimal frame sampling technique and frequency that would minimize the inference time without sacrificing classification performance. The classification scores for the sampled frames are combined to give a final score.
+The model used for classifying video frames is built upon the model currently in use for moderating photos, given the close similarities between the photos and video frames classification tasks. The photo moderation model has an excellent track record when it comes to protecting Yelp from inappropriate photos, and building on top of it helps us minimize engineering development costs and maintenance burden.
+Conclusion
+At Yelp, trust and safety is a top priority and we are committed to protecting our consumers and business owners. As video submissions to the platform grow, a robust and efficient moderation system is more important than ever, which is why Yelp combines automated and human moderation to protect our platform from inappropriate videos. The Trust & Safety team continuously strives to improve its moderation pipelines to keep Yelp one of the most trusted review platforms on the web.
+Acknowledgements
+This project would not have been possible without the support and collaboration from The Yelp Connect and Consumer Contributions teams. Special thanks to Marcello Tomasini, Gouthami Senthamaraikkannan, Jonathan Wang, Jiachen Zhao, Sandhya Giri, Curtis Wong, and Anka Granovskaya for contributing to the design and implementation of the pipeline.

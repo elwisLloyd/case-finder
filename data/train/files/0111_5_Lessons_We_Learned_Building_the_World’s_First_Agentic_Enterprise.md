@@ -1,0 +1,61 @@
+# 5 Lessons We Learned Building the World’s First Agentic Enterprise
+
+Источник: https://www.salesforce.com/blog/5-lessons-salesforce-agentic-enterprise/
+
+Business leaders I talk with often share a common frustration: There aren’t enough people to do all the work. In service, customers wait because reps can’t keep up. In sales, good leads go cold before anyone follows up. In operations, teams fight fires instead of planning ahead.
+No matter how modern the systems are, demand still outpaces headcount — and growth stalls.
+But there’s another way: the agentic enterprise, where humans and AI agents work side by side to unlock new capacity and create growth. At Salesforce, we’re making that leap with Agentforce 360, the agentic layer of the Salesforce platform.
+Here’s what I won’t sugarcoat: It can be really intimidating. There’s so much happening in the AI space that it’s overwhelming. When we started this journey, I’d love to say we were 100% confident in our approach, but we learned through trial and error, and we’re still learning.
+As Salesforce’s first customer, we’ve been rigorously testing, adopting, and deploying our own technology for about a year now. We also prototype ahead of the product roadmap to test and iterate. We’ve built a bunch of agents, and a lot of them were pretty cool … and a lot of them were not so great.
+I’ll share what we’ve learned so far: the wins, the failures, and the five key lessons that emerged from building Salesforce into an agentic enterprise. This isn’t a perfect playbook, but it’s our honest blueprint for what’s worked (and what hasn’t).
+Start becoming an agentic enterprise today
+In this step-by-step guide, we show you how we’re building Salesforce into a true agentic enterprise.
+The Agentforce effect: Our journey so far
+Let me start with where we are today, because the results in one year have been genuinely transformative.
+With Service Cloud, we’ve autonomously handled more than 2 million conversations, allowing our people to focus on high-priority cases while customers get faster answers.
+With Sales Cloud, we’re now able to follow up with every lead, something we simply couldn’t do before. Humans and agents are working together to follow up with every lead, every time, unlocking additional revenue we were leaving on the table.
+Before Sales Cloud, 75% of our leads went untouched because we didn’t have the capacity to engage them. Now, Agentforce autonomously reaches out to leads with personalized emails and books meetings for our SDRs, unlocking new revenue potential.
+We implemented Service Cloud on Salesforce Help, our self-service support site where customers get their questions answered instantly. Today, Agentforce on Salesforce Help handles more conversations than our human engineers — 2.2 million vs. 1.5 million, offering 24/7 help in seven languages.
+This isn’t just about efficiency; it’s about significant cost savings. The Salesforce Help use case has resulted in over $100 million in annualized cost savings by autonomously answering routine questions and freeing up our staff to handle complex cases.
+Our journey here wasn’t linear. Over the past year, we’ve distilled our thousands of learnings into five key lessons we found ourselves revisiting across every agent implementation. Here’s what emerged.
+Lesson 1: Start small and go fast
+When Agentforce first launched a year ago, we got excited, and made the mistake of building hundreds of agents. This led to duplication, lack of adoption, and blurry results. What we quickly learned was that we had to focus, earning the right to go fast, by first proving the product with a set of intentional use cases that showed real results. Our advice to you? Don’t try to go from zero to 100 immediately with your agents. Start with a use case that has reliable data, and then scale.
+We quickly made a pivot to quality over quantity, starting with the use cases that had clear business problems and ROI. This was grounded in one principle: breaking down jobs into what AI does best and what people do best. Think of it like training an intern: You don’t throw them into everything at once. You start with specific, well-defined tasks where they can succeed and learn.
+So, how did we decide where to start? We identified key personas, like support teams, sellers, marketers, and engineers, who could be best supported by agents. From there, we assessed a range of potential use cases and prioritized those with the greatest potential, feasibility, and ROI.
+This approach let us zero in on a few high-impact areas with top use cases that we call hero agents, where we started small and could move fast with low risk:
+- Data 360: As the foundational layer, Data 360 unifies trusted, organized data, drawing from both structured and unstructured content across internal Salesforce systems and external platforms (like Snowflake and Google Cloud). This is absolutely crucial as it provides the necessary context and governance for all agents to act accurately and at scale.
+- Salesforce Help: This agent resolves customer issues in minutes on our self-service site, substantially reducing the volume of support cases while increasing CSAT scores.
+- Engagement: Agentforce engages lower-scored leads 24/7 via email, qualifies them, and books meetings when they’re sales-ready.
+- Sales Agent: Agentforce helps sellers answer their top sales questions right in the flow of work — in Slack, on mobile, and in CRM. It can answer complex questions about pricing or competitive differentiators and can even generate account briefing documents.
+- Salesforce.com: This agent intelligently answers questions for visitors on our website, efficiently creating and qualifying new leads.
+These hero stories helped us figure out the right way to build and continue to grow as an agentic enterprise. Now that we know how to do it, we can scale horizontally to more use cases. A key part of this is constant testing, tuning, and iteration, which leads me to our second lesson learned.
+Lesson 2: Test, tune, repeat
+Launching an agent is just the beginning. It’s not shipping a piece of software; it’s hiring an intern and turning them into an executive. There’s a really good chance the first agent you deploy won’t work perfectly right away — it was the same for us.
+Just as for you, this was brand-new technology for us, and we found that these agents were different from anything we’d built before. As Customer Zero, we needed to get the reps in: nailing our critical use cases, getting them to perform, ramping them up, throwing more traffic at them, adding more capabilities, and making them better and better.
+Here’s an example. When we first started using Agentforce to nurture leads, we quickly realized that the emails it sent were too generic and not creating enough value for the prospect. Agentforce needed to consider context and adapt to what the lead needed at that moment.
+We improved our prompts and leveraged more information in Data 360 so that Agentforce could send highly personalized and effective emails. By making these changes, Agentforce is now proactively engaging prospects, booking meetings, and helping us build pipeline.
+This continuous testing and tuning applies across all of our agents — it never stops. We are constantly identifying ways to significantly improve results. Without this mindset, we wouldn’t be where we are today.
+Lesson 3: The right data is gold
+A big part of what we continuously assess, refine, and update is our data. These agents don’t like silos. They want to cross-cut data sets. That’s why the trusted governance layer, and clean, organized data with zero copy, is critical. It makes sure agents get access to the right data, at the right time, for the right purpose.
+Implementing Agentforce on Salesforce Help is a great example. With Data 360, we unified structured and unstructured data sources — like knowledge articles, help docs, and customer records — into a single source of truth. This allows Agentforce to deliver the right answers at the right time.
+During the process, we discovered we had overlapping data that could lead to less relevant answers. By focusing on quality over quantity, we prioritized the most valuable and relevant data instead of trying to ingest it all.
+And because Data 360 uses zero copy technology, we don’t have to move or duplicate data. We can seamlessly connect Salesforce to external platforms like Snowflake, Amazon, and Google Cloud.
+This trusted, unified foundation is what allows Agentforce to deliver personalized, AI-powered support across channels, use cases, and languages.
+See how agentic AI can boost your ROI
+In this free webinar featuring industry analyst Rebecca Wettemann, you’ll explore key strategies for deploying high-value agents.
+Lesson 4: Measure value and impact
+In Lesson 1, Start Small and Go Fast, we talked about starting with the business outcome and ROI in mind when prioritizing agents. Each time we launched an agent, we had to ask ourselves: How will we know if the agent is doing a good job?
+In many cases, the processes we built agents into were not instrumented from a technology or people perspective. This meant we had to think about how to instrument the end-to-end process for the entire company so we could accurately measure the ROI of the agent. The bottom line: If you can’t measure it, you can’t improve it.
+Now, we have a single view that helps us make sure our investment is delivering real value. We’ve set up an Agentforce dashboard that monitors in real time the key metrics we’re tracking, such as ROI, speed and performance, relevancy of responses, user satisfaction, and adoption. By giving us the information we need to drill down into, as well as an overall score of our performance, we can compare our agent’s performance to others in the company and understand where to go next.
+The best part about this dashboard is that it’s directly informing the product that you’re using: Agentforce Observability. We’ve taken the lessons learned and built it straight into the product as Customer Zero so you can feel the impact of what’s worked for us.
+Lesson 5: Embrace new ways of working
+Success requires more than new technology. It means changing how we work. The age of siloed teams is over. It’s not possible to have the kind of impact and create the agentic enterprise if everyone is working independently. We have to do it together.
+Traditional departmental lines are blurred with Agentforce. We’ve built stronger relationships between IT and our business teams: Customer Success, Sales, Marketing, and HR. Our blended technology and business teams work together to shape, build, and sustain agents once they’re prioritized.
+This transformation is also happening at the ground level, on every team. By redesigning processes so humans and AI agents work side by side, we’ve seen real transformation in a very short time.
+In this new world, I see humans for impact and agents for scale. The humans drive agents, managing and tuning their impact, and the agents are scaling in ways that are unbelievable. They work 24/7, speak multiple languages, and never sleep. We manage AI agents like they’re new team members, training them on the job to be done and the experience we want to create.
+In this new world, we also have the opportunity to reskill and, in some cases, redeploy employees in new roles — like forward deployed engineers, product managers, and solution engineers — to grow alongside the technology and meet business goals. The opportunities are truly endless.
+What’s next
+As Customer Zero, we pave the way by being an early adopter of our own technology, getting learnings, and working with the product development lifecycle to drill those learnings back into the product. In many cases, we’re sprinting ahead of the product. Salesforce has made a thousand mistakes so you don’t have to.
+We want to partner with you on your road to becoming an agentic enterprise. We promise to continue to share our Customer Zero journey to help you make this critical leap for your own company.
+Dive deeper into the agentic enterprise
+Watch on-demand sessions from Dreamforce, and learn how becoming an agentic enterprise has helped Salesforce redefine productivity, innovate with AI, and uplevel our employees.

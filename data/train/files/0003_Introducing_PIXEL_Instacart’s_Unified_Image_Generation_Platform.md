@@ -1,0 +1,57 @@
+# Introducing PIXEL: Instacart’s Unified Image Generation Platform
+
+Источник: https://tech.instacart.com/introducing-pixel-instacarts-unified-image-generation-platform-6d7dd0efe4c1
+
+Introducing PIXEL: Instacart’s Unified Image Generation Platform
+Key contributor: Shishir Kumar Prasad
+Introduction
+Selling groceries online has a fundamental challenge: customers can’t pick up and examine products like they would in-store. This is especially true for prepared foods, butcher items, and fresh bakery goods where visual appeal drives purchasing decisions. Without clear, accurate images, customers hesitate — and often abandon their carts. At Instacart, we understand that high-quality product images are essential for building trust and ensuring customer satisfaction. They’re the digital equivalent of holding a product in your hands. Industry research[1] consistently shows a direct correlation between high-quality imagery and increased customer conversion rates.
+Yet generating accurate, high-quality images at scale is a non-trivial challenge — especially across various applications. As our teams began exploring AI-powered solutions to fill image gaps, we witnessed that image generation was siloed within the organization. Different teams experimented with different models, prompting strategies, and evaluation criteria. This created duplication of effort and inconsistent results. Each team faced its own steep learning curve — figuring out what prompt worked best for a food image, which model produced the most realistic outputs, and how to measure quality.
+That’s why we’ve made a significant investment in PIXEL, our one stop image generation platform to enable faster iteration, improve consistency, and offer a more efficient path to creating high-quality visuals that meet our standards at Instacart.
+PIXEL: Instacart’s Image Platform
+Instacart has been experimenting with generative AI models for imagery for a few years. The problem was that each team had to figure out the right models to use, the best prompting strategies for each of those models, and had to spend their time figuring out how to access and integrate with different providers. PIXEL was created to simplify that entire process for food imagery. It provides access to a variety of models, generates the right parameters and configurations, and has strong defaults for prompts for both generating and evaluating images with the added ability for teams to modify those defaults as needed. Teams using PIXEL have witnessed a 10x reduction in the time taken to generate new imagery along with a notable increase in overall quality.
+It starts with a straightforward user interface that can be used by anyone at Instacart, regardless of their technical knowledge or role. They simply select a model from all the models available in PIXEL, enter a prompt, and generate images, so they can easily explore potential applications for their projects. It’s easy to change to a different model and adjust prompts — so teams can move fast without needing specific model training.
+Technical implementation and innovations
+PIXEL addresses the challenges of fragmented image generation through several key innovations:
+- Unified parameter protocol — Standardizes parameters across all image generation models
+- Prompt templates & few-shot prompting — Pre-built, tested prompts optimized for various food related imagery along with some default few shot prompt examples based on image type for better quality outputs
+- Fine-tuned models — Custom models trained on Instacart’s specific product categories
+- Automated quality evaluation — Vision-language models that assess output quality
+- Infrastructure integration — Seamless API access through Instacart’s existing systems and storage across S3 and Snowflake
+Let’s explore how each of these components works:
+Unified Parameter Protocol
+Behind the scenes lies a unified parameter protocol that standardizes working across multiple image generation models to set image style, size, and cfg_scale which determine how closely the image follows the prompt. This means teams can switch between models from various providers by changing just the model name — PIXEL handles all the parameter translation automatically.
+Prompt Templates and Few-Shot prompting
+Once a model is chosen, team members can leverage a number of prompt templates to maintain consistency. These prompt templates define characteristics about lighting, backgrounds, and the image context are injected as few shot examples for each application. Teams can follow practical guidelines to create effective prompts across different models, reducing trial and error in the process. Here are example images with the original prompt and the new prompt which was rewritten using our few shot prompting technique for the final image. The rewritten prompt adds focus to the overall style and presentation of the picture.
+Fine tuned models
+We have also implemented fine tuned models for generating images of products using the DreamBooth[2] technique. DreamBooth works by fine-tuning a pre-trained text-to-image diffusion model — such as Stable Diffusion — on just a handful of product images, associating them with a unique identifier or keyword. This allows the model to generate highly realistic and detailed images of specific products in a wide variety of environments, poses, and lighting conditions, while preserving the unique characteristics and fine details of each item. By utilizing DreamBooth’s class-specific prior preservation loss, the technique ensures that the generated images not only maintain fidelity to the original product but also enable consistent and creative re-contextualization — placing products in new scenes or styles without losing their defining features.
+This technique was highly useful to generate images of products in different backgrounds based on the retailer requirements and other characteristics such as packaging and quantity. This could be used for unbranded products like produce or meat items to get custom images trained on top of photographed resources. It can also be used for advertising to display the same product across different backgrounds. This approach is especially valuable for e-commerce, as it allows for the rapid creation of high-quality, customized product images that would traditionally require extensive manual photography and editing.
+Automated quality control and assessment
+Get Prithvi Srinivasan’s stories in your inbox
+Join Medium for free to get updates from this writer.
+The standards for food related images are pretty high. Initially we had a poor approval rate with our human in the loop judges with AI generated images. The images need to be accurate to the product and have visual consistency. Since its creation, PIXEL has utilized vision language models as a feedback loop to improve our human judges approval rate of images from 20% to 85%. Our evaluation system follows the steps below.
+- We generate a first pass of images with a prompt generated by LLM.
+- We judge the image output using a curated set of evaluation questions that are generated by an LLM, based on the project needs.
+- We then pass the questions and the image to a VLM for evaluation. We make a decision whether or not to use the image based on the number of questions which passed from the evaluation.
+- If the image fails the evaluation, we incorporate the failed questions into the prompt generator LLM to generate a revised prompt for the image generation model and we repeat these steps until the image passes our threshold.
+VLMs were prompted with curated questions which checked for composition, consistency, style and overall appeal. For example, “does the given image contain <X>?”, “does the given image contain a warm neutral background?”, “does the given image contain non food content?”, etc. This provided a significant improvement in image quality while decreasing manual review efforts and cost.
+Infrastructure integration
+We built PIXEL on top of Instacart’s existing service infrastructure which creates an RPC service, giving teams access to PIXEL for their workflows through an API call. We also let users store the generated images and easily access their URLs through an unique ID stored in Snowflake. This reliable system will grow and evolve with Instacart’s product and platform needs.
+Key Product Applications
+Let’s take a look at three of PIXEL’s applications:
+Butcher Cuts
+When we needed to develop a set of images for different types of butcher cuts and meats, PIXEL allowed us to test several models quickly to determine which one was optimal for this specific category of images. This category of products has its own set of challenges for customers, and these images helped them quickly search for and navigate to the right meat cut based on a visual cue instead of all-text descriptions. Overall navigation time and “add to cart” time dropped by over 25% for these items once we introduced images.
+Lifestyle Imagery
+PIXEL is also utilized to generate lifestyle imagery for our product carousels and customer recommendations. For example, when our customers purchase herbed cheese, we offer highly explainable pairing recommendations of related cheese and appetiser options including crackers, meats, and pickled items. PIXEL looks across those recommendations to create an overall category image, which in this case is a cheese platter. This increased our personalized carousel recommendation cart conversion by 15%.
+FoodStorm Prepared Foods
+Last year, an interesting use of PIXEL was its application within FoodStorm, Instacart’s all-in-one solution for prepared foods and catering. PIXEL enhanced image content for their platforms and gave opportunities for Retailers to generate images for their prepared food offerings. Retailers could generate images for ingredients and make their order management system more visually appealing to customers. PIXEL empowers retailers by giving the tools necessary to quickly set up the ordering experience without having to take expensive food photography these images. Read more about it here[3]!
+An interesting outcome we realized from launching various applications was that the best performing model varied project by project. PIXEL enabled project leads to initiate projects using pre-configured, optimal model and parameter recommendations. Subsequently, they could rapidly test other models with a sample dataset and decide which one works best before moving to production image generation at scale.
+Conclusion and Next steps
+We’re actively investing in the next phase of the platform. We’re integrating newer models to expand the creative range and quality of output. For teams seeking more expressive control, PIXEL will soon offer fine-tuned knobs for adjusting image composition, lighting, and background. Finally we will offer easier access control to fine tune image models and serve them through the PIXEL platform.
+PIXEL has transformed how Instacart creates product imagery. It centralizes model access, simplifies prompt engineering, enforces visual quality, and integrates with infrastructure for scale.
+Follow tech-at-instacart[4] to stay updated.
+References
+- https://www.researchgate.net/publication/287267271_The_impact_of_product_photo_on_online_consumer_purchase_intention_An_image-processing_enabled_empirical_study
+- https://dreambooth.github.io/
+- https://tech.instacart.com/enhancing-foodstorm-with-ai-image-generation-d76a74867fa4
+- https://tech.instacart.com/

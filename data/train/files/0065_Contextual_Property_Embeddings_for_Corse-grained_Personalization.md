@@ -1,0 +1,27 @@
+# Contextual Property Embeddings for Corse-grained Personalization
+
+Источник: https://medium.com/expedia-group-tech/contextual-property-embeddings-for-corse-grained-personalization-c56e9cda44a5
+
+Contextual Property Embeddings for Corse-grained Personalization
+How Expedia Group uses embeddings for personalized hotel search
+In modern search and recommendation systems, embeddings play an important role as a tool for capturing complex relationships between entities such as items and users in a dense format. Embeddings allow us to represent entities in the same vectorial space and measure similarity. Embeddings compressed format offer efficient storage fast retrieval which can enable large-scale search and recommendation systems. At Expedia Group™ we have been leveraging property embeddings in our search systems which are learnt through the hotel2vec model [1].
+In this work we extend hotel2vec to encompass contextual information about the traveler. Specifically, we are interested in adapting the property embedding based on the loyalty tier of the traveler. By doing so, we hope to capture better preferences for the travelers according to their current loyalty status. For example, travelers in the higher loyalty tier tend to prefer high quality properties.
+Approach
+We extend the hotel2vec architecture to accept loyalty tier as input. More specifically, we choose to perform an early fusion with the different embeddings that flow into the model. The hotel2vec model takes as inputs the target property, which is embedded, different property features such as amenities, review rating, star rating, type of the property and geographical information. Each category of features is projected to provide an embedding. The different embeddings along with the traveler context embedding are concatenated before the projection layers as it is illustrated in Figure 1.
+The model is trained with the same loss function as hotel2vec. Specifically, the model minimizes the following loss:
+where D⁺ refers to the co-occurred properties, Vʰ refers to the contextual embedding of property h and Nc are negatives drawn from the same market.
+Get Ioannis Partalas’s stories in your inbox
+Join Medium for free to get updates from this writer.
+The contextual model is trained in one year of search sessions where we collect the clicked properties. For, loyalty tier we apply a pre-processing step to keep the valid ones, that is blue, silver and gold while we default to blue for unknown values.
+For performance evaluation we predict co-occurrences of properties in a session of clicks and calculate hits@k which measures how many times the context property is ranked in the top-k ones when we score across the full inventory. Both models are trained with SGD that uses an exponential decay learning rate scheduler and 2000 negative samples.
+In the offline experimentation we observed that the contextual version of hotel2vec was improving the results in both hits@10 and hits@100 versus the model that does not use extra context.
+In order to further test the property embeddings we add them in a search ranking model that uses these embeddings as input features. In the case of the contextual version we export from the model three different embeddings for each property for blue, silver and gold tier status correspondingly. Then, for each search query we join to each impression the embedding that corresponds to the loyalty status of the traveler. In case it is unknown we default to blue tier status. We compare against the baseline ranker that includes plain hotel2vec embeddings as property features.
+We assessed performance metrics, like NDCG@10, as well as qualitative metrics for the top-20 ranked properties when using the contextual hotel embeddings. More specifically, we were interested to see how average price and average guest review rating changes for the top of the ranking.
+In terms of performance metric, we observe that there is a slight improvement for NDCG@10. For the qualitative metrics we noticed that the model proposes less expensive properties to the blue tier category while keeping the same quality in terms of guest review rating. On the other hand for silver and gold travelers which are more engaged we observed an increase in the average price while also improving the guest review rating which indicates properties with better services and quality.
+Online test
+The ranker which leverages the contextual hotel2vec version has been tested versus the one that is trained using plain hotel2vec. The embeddings for the new version are stored in a feature store and retrieved based on the traveler’s tier during inference. As in the case of model training, when tier status is missing, we use a default value of blue. We observed a significant improvement for CVR with more tailored results to the different segments of the travelers.
+Conclusions
+In this post we described how we built contextual hotel representations for enabling cohort-based personalization. The results on both the learning task for the embeddings as well as the downstream task showed that contextual embeddings can improve relevancy for the user. This was also confirmed in an online test.
+As next steps, we would like to explore further contextualization of the embeddings and test in other downstream tasks like recommendations.
+References
+[1] Hotel2vec: Learning Hotel Embeddings from User Click Sessions with Side Information, I Partalas, A Morvan, A Sadeghian, S Minaee, X Li, B Cowan, DZ Wang, 2021, RecTour@ RecSys, 69–84

@@ -1,0 +1,29 @@
+# Using Data Science to Retain Customers
+
+Источник: https://medium.com/gousto-engineering-techbrunch/using-data-science-to-retain-customers-63f19a03a0b6
+
+Using Data Science to Retain Customers
+Gousto’s high retention rates are testament to the fact that our customers are our priority. Since our recent team restructure, the Activate Tribe is entirely responsible for customer retention and satisfaction at Gousto. The Data Science team in Activate work with a model which uses behavioural data to predict when customers are likely to leave us (referred to throughout this article as ‘churn’). We have been working with them to build a data dashboard to monitor when customers are likely to leave us, so our colleagues in Marketing can intervene and offer them the right incentives to stay at precisely the right time.
+Challenges
+There are various reasons a customer might stop using meal delivery kits, from circumstantial (they aren’t home in the evenings), to financial (their discount expired) or company-specific (too much packaging; not enough choice; a competitor offering something different).
+The main challenges are to identify what might cause a particular customer to leave us, predict how likely they are to churn and when, and consequently decide how to intervene. Every user is different, so we need to find a way to customise this prevention behaviour.
+High Level Solution
+Our Data Science team uses a Machine Learning algorithm to predict which customers are likely to churn and why. This data is then passed to the Marketing team, who can decide which approach to use, whether that be push notifications, promotions, or emails, for example.
+We built a churn prediction dashboard with a Business Intelligence tool called Sisense, which colleagues without algorithmic knowledge can use to analyse, monitor, and predict customers’ behaviour.
+Churn Model
+So, how does the churn prediction algorithm work? The churn model is a binary classification problem based on a feature set. At Gousto, we only use behavioural data as inputs to the model, such as the number of recipes a customer orders or how many times they have previously paused their subscription. There are over 300 different features which affect a customer’s behaviour, from order frequency to use of the app.
+The Machine Learning algorithm uses these features to make a prediction on whether or not a customer will churn. However, some features are more influential than others, and some drive retention while others drive churn.
+Feature names have been removed from the plot above protect our customer data but this gives an indication of how the model works. The red features influence churn, whereas the blue ones influence retention The model we used (gradient boosted tree) is not readily interpretable, so we use SHAP values (the values on the x-axis) to estimate feature contributions to the model’s predictions. Each bar shows the mean absolute SHAP value for a feature over all customers; a higher value means that the feature was more influential to the model’s prediction.
+Get Eliza Plowden’s stories in your inbox
+Join Medium for free to get updates from this writer.
+Using our Sisense dashboard, we can filter by feature to see how the average values differ in a churner compared to a non-churner. Here are a couple of the features:
+We can also use the churn model at a customer level to understand not only the likelihood of a customer churning, but also the main features which contribute to this prediction. In the table below, we take four of the features and analyse their effect on the churn behaviour of 20 users, 10 of whom we predict will churn.
+As you can see here, the model transforms each customer’s behavioural data and calculates the probability that they will churn. Currently, our threshold for a customer churning is just below 50%, so anyone with a probability of 0.5 will be given a binary prediction of 1 and consequently be labelled a churner.
+However, we can also decide how sensitive or cautious we want our model to be. If someone is even slightly likely to churn, do we want to be flagged (precision)? Or do we only want to know about the people who are definitely going to leave (recall)? The Precision Recall plot demonstrates the relationship between the two factors; we can always adjust the curn probability threshold if we want to change the precision and recall of our model.
+The Finance and Marketing teams then work together to decide which is the most effective approach in each case, preemptively saving the company money by preventing certain users from churning.
+Our Data Science team is currently working on another algorithm for Promotion Optimisation, which would help us identify promotion most likely to appeal to each customer likely to churn. (You can read a bit about it here.)
+Once we’ve decided on the churn probability threshold, we can calculate the binary prediction from each user’s churn probability. The Churn Prediction model considers a user to have churned if they have not ordered a box for 4 weeks. We can therefore take our number of predicted churners and compare that to the number of customers who actually churned four weeks after the prediction to get an idea of the model’s accuracy.
+We monitor this figure over time, and can adjust the model where necessary. The numbers on the x-axis refer to Gousto’s Menu Week system.
+Conclusion
+This Sisense dashboard is a useful visualisation of how this Machine Learning algorithm is used at Gousto. We can use this detailed analysis of individual customers’ behaviour to influence their future behaviour, attempt to stop them from churning, and ultimately save the company money while retaining happy and satisfied customers. Churn is a win-win for everyone!
+Author’s Note: It’s important to note that data has been fudged for privacy purposes.

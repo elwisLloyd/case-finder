@@ -1,0 +1,36 @@
+# The Making: Optimising Budget through Machine Learning
+
+Источник: https://medium.com/foodpanda-data/the-making-optimising-budget-through-data-analysis-3ca4d97a6d1a
+
+The Making: Optimising Budget through Machine Learning
+Navigating Methodological Approaches for foodpanda’s Marketplace Balance Project
+Building on Introduction: Optimising Budget through Machine Learning, this article aims to share the methodology and learnings we have.
+Also, Sculpturing: Optimising Budget through Machine Learning shares about the sculpturing of the project, in terms of establishing the project and forming the ways of working within the team.
+Measure of Prediction Accuracy
+Mean Absolute Percentage Error (MAPE) was used to measure the prediction accuracy.
+Mean absolute percentage error (MAPE) is a metric that defines the accuracy of a forecasting method. It represents the average of the absolute percentage errors of each entry in a dataset to calculate how accurate the forecasted quantities were in comparison with the actual quantities.
+MAPE is a straightforward metric, with a 10% MAPE representing the average deviation between the forecasted value and actual values, regardless of whether the deviation was positive or negative.
+MAPE is useful for cases where values differ significantly between time points and outliers have a significant impact.
+The learning Journey
+Granularity
+Efforts to construct the model using Monthly and Weekly data have yielded a notable increase in Mean Absolute Percentage Error (MAPE). (This means that the model performance is far from ideal) It is hypothesised that this elevated error rate may stem from the loss of intricate details in the data during the aggregation from Daily to Weekly and Monthly. In contrast, models built on Daily data demonstrate strong performance, with cities exhibiting a MAPE of less than 10%.
+Consequently, the strategy adopted involves generating predictions at the Daily granularity, and these predictions are subsequently aggregated to obtain forecasts at Monthly and Weekly levels. This approach aims to preserve the granularity and nuanced information present in the Daily data, mitigating the challenges associated with higher-level aggregation that contribute to the observed higher MAPE.
+Linear Regression
+The initial exploration into machine learning involved the application of Linear Regression, chosen for its simplicity as a baseline model. This straightforward approach allowed for a swift establishment of a starting point. However, the outcomes of this model were not within our expectations. Linear Regression, which assumes a constant increase in Gross Merchandise Value (GMV) with every additional budget, did not align with the anticipated real-world scenario. In reality, there should exist a tipping point where allocating more budget ceases to yield a proportional increase in GMV. This observation prompts a reconsideration of the modelling approach to better capture the nonlinear dynamics inherent in the relationship between budget and GMV.
+Get Shi Min’s stories in your inbox
+Join Medium for free to get updates from this writer.
+At this point, we were looking for a logarithmic curve.
+Polynomial Regression
+In our pursuit of capturing a logarithmic curve, Polynomial Regression emerged as a promising choice. The results did reveal a tipping point, aligning with our expectations. However, a notable drawback surfaced as the model exhibited a downward slope beyond the tipping point. This aspect contradicts the expected real-world scenario, where an increase in budget should not lead to a decrease in Gross Merchandise Value (GMV). Ideally, there should be a plateau, indicating a saturation point where additional budget doesn’t result in a decline but rather a stabilization of GMV. This discrepancy underscores the need for further refinement in our modeling approach to better reflect the dynamics of the relationship between budget and GMV.
+Trees
+Facing a challenge in determining the most suitable model, we conducted experiments with various regression models available, including Multi-Linear Regression, Lasso Regression, Ridge Regression, Elastic Net Regression, Decision Tree Regression, and Random Forest Regression.
+Among the options, Decision Tree and Random Forest Regression exhibited the lowest error rates and, importantly, generated a logarithmic curve that aligned with our desired trend. Initially, this outcome seemed promising, suggesting that we had identified the right model, given its favorable trend and low error rate.
+However, a critical oversight became apparent as we delved deeper into the predictions. Both Decision Tree and Random Forest Regression models produced stepped predictions, meaning that for different budget allocations, the models yielded the same prediction. This realization highlighted an inherent feature of tree-based models. While the overall graph appeared visually appealing and followed the desired trend, the inability to distinguish between various investment returns, even if minimal, raised concerns.
+Recognizing the importance of discerning nuanced differences in investment returns, we acknowledged the need to explore alternative models that could provide more granularity in predictions. This realisation prompted us to continue our exploration in search of a model that not only captured the desired trend but also offered a more nuanced and differentiated prediction based on varying budget allocations.
+GAM
+Generalised Additive Model (GAM) is an additive modelling technique where the impact of the predictive variables is captured through smooth functions which — depending on the underlying patterns in the data — can be nonlinear.
+There are compelling reasons to consider the use of Generalised Additive Models (GAM) in our modelling endeavours, including interpretability, flexibility/automation, and regularisation. When confronted with nonlinear effects in the model, GAM offers a solution that is both regularized and interpretable. In essence, GAMs strike a delicate balance between the interpretability of linear models, which may be somewhat biased, and the extreme flexibility of “black box” learning algorithms.
+In the real-world context of managing the dynamic relationship between customer orders and the capacity of available riders, this would seem like a logarithmic curve, where an increase in budget should not result in a decrease in Gross Merchandise Value (GMV), but rather exhibit a tapering off after reaching a certain point.
+Given that a logarithmic curve represents a nonlinear pattern, GAM emerges as an excellent choice for our requirements. GAM can adeptly model nonlinear patterns in data, providing a smooth representation while still delivering results that are interpretable and aligned with the nuanced dynamics we observe in the real-world scenario.
+The Final Model
+The Generalised Additive Model (GAM) produced a satisfactory Mean Absolute Percentage Error (MAPE), albeit with a higher error rate compared to both Linear Regression and Trees. However, it still stayed below the 10% threshold. After careful evaluation, the chosen model for the project’s culmination is the Generalised Additive Model (GAM).

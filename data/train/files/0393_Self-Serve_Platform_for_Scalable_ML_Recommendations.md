@@ -1,0 +1,50 @@
+# Self-Serve Platform for Scalable ML Recommendations
+
+Источник: https://medium.com/booking-com-development/self-serve-platform-for-scalable-ml-recommendations-358caf217a2e
+
+In today’s fast-paced digital landscape, the ability to adapt quickly to user needs and handle large-scale demands is paramount. That’s why we’ve transformed our recommendation service into a powerful self-serve platform, designed to tackle not only any machine-learning (ML) and AI challenges with ease but also to scale effectively. Let’s dive into how this evolution empowers teams and enhances user experiences.
+A New Era of Recommendation
+TL;DR: Our transition to a self-serve platform leverages an innovative recommendation pipeline. This shift allows users to effortlessly meet diverse product needs, thanks to a suite of well-defined components — ML models, features, prediction graphs, and more — that cater to various use cases. In this article, we will explain how our platform has enabled numerous teams to effortlessly create multiple entry points featuring a wide range of top-tier recommendation types for our customers, starting with recommendations for hotels, destinations, flights, attractions, and beyond!
+The Foundation: Our Recommendation Platform
+The Recommendation Platform (RecP) has been shaping user experiences for over two years, expertly translating customer needs into personalized recommendations. This evolving platform is integral to key areas of our Booking.com website and apps, such as the Homepage and Search Results pages, and is backed by a dedicated team and a robust pipeline solution.
+The Driving Force: Challenges and Solutions
+We will focus on specific examples, though we actually have a wide range of different problems and use cases. Consider the task of recommending local travel destinations for a customer. For new customers, it’s most likely essential to use their origin country as the starting point for travel recommendations. However, for returning customers with prior website activity, such as search history, recommendations should be based on their past interests and recent searches. While gathering the right data is crucial, the real challenge lies in optimizing the predictions we present to each customer.
+In other words, the customer’s level of activity on the website, along with their location, plays an important role in decision-making, but it is not the only factor. Since the machine-learning models are trained on specific data from a certain period, the quality of the predictions is high, but not perfect, as additional dynamic factors can influence decisions. These factors, such as availability or other variables, can change at any moment. Considering these parameters leads to more efficient, accurate, and personalized decision-making for the customer. Below, we will outline examples that enable real-time optimization in delivering recommendations.
+- Blacklisted Locations: Some areas may need to be excluded from recommendations due to safety, legal or marketing concerns. This example highlights that changes in destination accessibility can happen at any time, whether due to security issues, strikes, or laws restricting visitor entry. At Booking.com, we rely on real-time updates, making it crucial to filter out locations we cannot recommend when making decisions.
+- Property Availability: If a location has no available properties, it’s irrelevant to the customer. This example addresses how destination recommendations are influenced by hotel availability during the customer’s preferred booking window. Since bookings are made constantly, recommending destinations without available hotels would be ineffective, making this filtering crucial for accurate recommendations.
+Let’s proceed to the next step. Once we enhance the predictions with the requested content (such as images, prices, translations, etc.), we then apply additional specific filtering rules. These may involve excluding recommendations that, for various reasons, we prefer/must not show to the customer or those that are not appealing enough to recommend, such as locations with no attractive image or very high prices. Lastly, we need to ensure our recommendations are sorted by relevance — proximity, customer preferences, and more.
+Introducing the Recommendation Pipeline
+We’ve identified several challenges that emphasize the need for a consistent approach to tackling similar machine-learning problems. To address this, we integrated a recommendation pipeline into the core of our system. This pipeline standardizes the resolution of ML challenges, promoting component reusability across various use cases. It enables customers to define complex recommendation logic with ease, allowing for scalable, experiment-driven solutions that are flexible, accessible, and optimized for testing and communication across Booking.com. As a result, we can efficiently scale personalized recommendations, enhancing user experiences across our platform.
+The core solution is designed as a structured pipeline that methodically addresses distinct sub-problems in sequence, with each stage serving a unique and specific function.
+- Process: Handles user requests and selects appropriate recommendation strategies.
+- Predict: Utilizes multiple models for accurate predictions, driven by a decision graph.
+- Initial Filtering: Screens predictions for compliance and other reasons.
+- Enrich: Adds value with localized content, images, metadata and other enrichments.
+- Enriched Filtering: Further filtering based on the enrichments from earlier steps to improve relevance.
+- Select & Sort: Chooses and organizes results based on user preferences.
+The Success Formula: Effective Recommendation Strategies
+Every great platform has a strategy at its core. Following on from the recommendation pipeline solution presented in the previous section, our platform enables teams to create tailored recommendation strategies that incorporate use case requirements through various elements — specific models (when combined, they form a prediction graph that incorporates decision-making elements and utilizes various features), filtering criteria, and selecting/sorting the preferred results. This unified approach shapes adaptable recommendation strategies, enabling seamless setup across multiple use cases. We think of these building blocks like “Lego,” where components can be assembled in different combinations for each strategy. This approach not only saves time in defining use case behaviours but also ensures consistency and reusability, supporting true scalability.
+Get Tomer Ovadia’s stories in your inbox
+Join Medium for free to get updates from this writer.
+Examples of different recommendation strategies:
+- Destinations based on deals.
+- Destinations with a beach.
+- Popular destinations.
+- Hotels close to the destination.
+- Hotels with deals.
+- Popular hotels or similar to a certain hotel.
+- Attractions close to a certain location.
+- Popular attractions.
+The Power of Prediction Graphs
+At the heart of our system lies the prediction graph, a pivotal component that employs diverse models to address specific challenges. Whether models operate sequentially or in parallel, each is tailored to solve unique problems, making our approach versatile and effective.
+Below is a visual graph of the domestic destinations recommendation strategy’s prediction graph.
+Every recommendation strategy incorporates a prediction graph element. As shown in the example graph above, the prediction component is based on two models. The model on the left utilizes the user’s most recent search, considering variables such as the searched location and traveler type. In contrast, the model on the right serves as a fallback option, primarily depending on the user’s country code.
+Features That Make a Difference
+Incorporating features into our models is crucial. Each model has distinct inputs, and understanding these allows us to define the necessary feature mappings.
+The diagram above illustrates how features integrate with models, highlighting the flexibility we’ve incorporated into the system for feature reuse. Each argument that a model requires — such as “location,” “traveler_type,” and others — is mapped to a feature identifier. Since features are well-defined components, their clear definitions simplify implementation and improve our understanding of their behavior during real-time value extraction. Additionally, the way these features are constructed facilitates the easier assembly of recommendation solutions at scale while ensuring the correctness of all feature components.
+A Collaborative Framework: The Components Registry
+Our components registry allows various teams to register their use cases independently, facilitating collaboration and reusability. This approach not only enhances efficiency but also encourages innovation by allowing teams to explore existing components and build upon them.
+Each component type has numerous implementations, and the combination of these elements creates a mapping that each use case owner can apply to their recommendation strategy.
+In the example above, we have two use cases, each with its own recommendation strategy. When certain components are reused, such as the ML model (labelled M1) and some features (labelled F2), specific features can also be combined to suit each strategy. One implementation may include both a sorter and a selector in one strategy, while the second strategy only features an adapted selector along with other components.
+Conclusion
+In conclusion, our user-friendly self-serve platform represents a significant advancement in delivering personalized experiences. Designed to empower Booking.com teams, it facilitates the seamless implementation of scalable machine-learning recommendations by providing accessible resources and best practices. This innovative solution not only streamlines onboarding and processes but also unlocks the full potential of machine-learning, enabling teams to innovate, drive efficiency in their projects, and enhance decision-making. Join us on this exciting journey!!
