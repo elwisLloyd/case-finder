@@ -33,6 +33,7 @@ from .models import (
     ProgressResponse,
     QuestionMode,
     QuestionsResponse,
+    SimilarCase,
     UploadResponse,
 )
 
@@ -227,8 +228,17 @@ def get_questions(
             if mode in {QuestionMode.enriched, QuestionMode.both}
             else None
         )
+        relevant_cases = store.read_json(process_id, "retrieval/relevant_cases.json")
         return QuestionsResponse(
-            process_id=process_id, mode=mode, baseline=baseline, enriched=enriched
+            process_id=process_id,
+            mode=mode,
+            baseline=baseline,
+            enriched=enriched,
+            # CaseRepository indexes Markdown files by their filename stem.
+            similar_cases=[
+                SimilarCase(case_id=case_id, file_name=f"{case_id}.md")
+                for case_id in relevant_cases["case_ids"]
+            ],
         )
     except JobNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Process not found") from exc

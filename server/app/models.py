@@ -43,11 +43,17 @@ class ProgressResponse(BaseModel):
     error: ErrorDetail | None = None
 
 
+class SimilarCase(BaseModel):
+    case_id: str
+    file_name: str
+
+
 class QuestionsResponse(BaseModel):
     process_id: str
     mode: QuestionMode
     baseline: list[str] | None = None
     enriched: list[str] | None = None
+    similar_cases: list[SimilarCase] = Field(default_factory=list)
 
 
 class PendingResponse(BaseModel):
