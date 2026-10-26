@@ -3,3 +3,5 @@
 __pycache__/
 .ipynb_checkpoints/
 data/clustering/
+data/train/train_index_summarized.csv
+data/train/train_index_summarized.state.json
