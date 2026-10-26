@@ -71,3 +71,22 @@ of whether the enriched approach wins more often. Ties are reported and excluded
 - Run notebooks only from the repository root, or update the path constants in their configuration cells.
 - Do not commit `.env`
 - Case text is sent to the configured OpenAI API. Review your organization's privacy and data-handling requirements before using sensitive material.
+
+## Cluster training articles
+
+Open `cluster-train-data.ipynb` and run all cells after installing `requirements.txt`.
+It reads existing JSON embeddings from `/data/train/train_index.csv` when present,
+otherwise `data/train/train_index.csv`, without making API calls. Article titles come
+from Markdown headings in the adjacent `files/` directory, with an ID-based fallback.
+The notebook compares DBSCAN and HDBSCAN on L2-normalized embeddings, shows a
+neighbor-distance plot for choosing DBSCAN's radius, and visualizes both results
+using PCA and t-SNE. Tune the configuration cell and inspect the article examples;
+cluster `-1` denotes noise. HDBSCAN is selected for export by default.
+
+Generated files go to the ignored `data/clustering/` directory. At
+<https://projector.tensorflow.org/>, use **Load** to select `vectors.tsv` as tensor
+and `metadata.tsv` as metadata, then choose `title` for labels and `cluster` for
+colors. Vectors contain the original embeddings with no header; metadata contains
+article IDs, titles, noise flags, and cluster labels for both algorithms in the
+same row order. `clusters.csv` and `run_config.json` support local inspection.
+Only visualization is capped at 5,000 articles; clustering and export use all rows.
