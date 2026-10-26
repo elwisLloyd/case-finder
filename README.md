@@ -90,3 +90,25 @@ colors. Vectors contain the original embeddings with no header; metadata contain
 article IDs, titles, noise flags, and cluster labels for both algorithms in the
 same row order. `clusters.csv` and `run_config.json` support local inspection.
 Only visualization is capped at 5,000 articles; clustering and export use all rows.
+
+## Create concise Russian summaries
+
+Run `summarize-train-data.ipynb` from the repository root. It reads the existing
+`summary` column from `/data/train/train_index.csv` (or the repository's
+`data/train/train_index.csv`), asks ChatGPT for one Russian sentence of at most
+35 words without company or product names, and embeds that new description.
+It uses `OPENAI_API_KEY` from `.env` and the existing `OPENAI_LLM_MODEL` and
+`OPENAI_EMBEDDING_MODEL` settings. API usage incurs charges.
+
+The result is `train_index_summarized.csv` beside the input, with exactly
+`id`, `summary`, `embedding` columns; embeddings remain JSON arrays. Each completed
+row is saved immediately using an atomic file replacement. Rerunning skips completed
+IDs, so an API failure only requires retrying the unfinished row. Set `MAX_NEW_ROWS`
+to 5 for an initial style review, then to `None` to finish the index. Review the
+resulting descriptions for semantic accuracy and company-name omissions.
+
+A companion `train_index_summarized.state.json` prevents resuming with changed source
+summaries, models or prompts. For a different configuration choose a fresh output
+path and matching state path, or remove both generated files to rebuild. Run only
+one writer per output file. The source index is never overwritten. To cluster the
+new descriptions, set `INDEX_PATH` in `cluster-train-data.ipynb` to the new CSV.
