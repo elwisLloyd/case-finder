@@ -4,7 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pandas as pd
 
@@ -145,6 +145,75 @@ class EvaluationTests(unittest.TestCase):
             outside.write_text('ТЗ', encoding='utf-8')
             with self.assertRaises(ValueError):
                 load_spec(outside, tz)
+
+
+class ValidationRetryTests(unittest.TestCase):
+    def make_client(self, responses):
+        responses = iter(responses)
+
+        def parse(**kwargs):
+            # Как в OpenAI SDK: Pydantic разбирает JSON внутри completions.parse.
+            parsed = kwargs['response_format'].model_validate_json(next(responses))
+            return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(
+                refusal=None, parsed=parsed))])
+
+        parse_mock = Mock(side_effect=parse)
+        client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(parse=parse_mock)))
+        return client, parse_mock
+
+    def response_json(self, information):
+        return json.dumps({'items': [{
+            'item_id': 0, 'information': information, 'p': [0, .8, .2, 0],
+            'evidence': 'Стандартный виджет.',
+            'question': 'Нужна ли кастомизация интерфейса?',
+            'comment': 'Уровень зависит от кастомизации.',
+        }]}, ensure_ascii=False)
+
+    def test_sdk_validation_error_is_repaired_without_losing_probabilities(self):
+        from evaluator.evaluator_v2.probability_evaluator import ask
+        client, parse = self.make_client([
+            self.response_json('explicit'), self.response_json('partial')])
+        with patch('builtins.print'):
+            result = ask(client, 'test', Assessments, 'Оцени пакет.', {'ТЗ': 'Стандартный виджет.'})
+        self.assertEqual(parse.call_count, 2)
+        self.assertEqual(result.items[0].information, 'partial')
+        self.assertEqual(result.items[0].p, [0, .8, .2, 0])
+        first, second = parse.call_args_list
+        self.assertEqual(first.kwargs['messages'][1], second.kwargs['messages'][1])
+        self.assertIn('items.0', second.kwargs['messages'][0]['content'])
+        self.assertIn('Не делай оценку однозначной', second.kwargs['messages'][0]['content'])
+
+    def test_invalid_answer_stops_after_three_attempts(self):
+        from evaluator.evaluator_v2.probability_evaluator import ask
+        client, parse = self.make_client([self.response_json('explicit')] * 3)
+        with patch('builtins.print'), self.assertRaisesRegex(RuntimeError, 'за 3 попытки'):
+            ask(client, 'test', Assessments, 'Оцени пакет.', {})
+        self.assertEqual(parse.call_count, 3)
+
+    def test_valid_response_is_not_repeated(self):
+        from evaluator.evaluator_v2.probability_evaluator import ask
+        client, parse = self.make_client([self.response_json('partial')])
+        ask(client, 'test', Assessments, 'Оцени пакет.', {})
+        self.assertEqual(parse.call_count, 1)
+
+    def test_transport_failure_is_not_treated_as_validation(self):
+        from evaluator.evaluator_v2.probability_evaluator import ask
+        client, parse = self.make_client([])
+        parse.side_effect = ConnectionError('API недоступен')
+        with self.assertRaises(ConnectionError):
+            ask(client, 'test', Assessments, 'Оцени пакет.', {})
+        self.assertEqual(parse.call_count, 1)
+
+    def test_repaired_response_completes_evaluation(self):
+        menu = load_menu(BASE / 'chatbots_menu.csv').head(1)
+        client, parse = self.make_client([
+            self.response_json('explicit'), self.response_json('partial')])
+        with patch('builtins.print'):
+            results = evaluate(client, 'test', menu, 'Стандартный виджет.', progress=lambda *_: None)
+        self.assertEqual(len(results), 1)
+        self.assertGreater(results.iloc[0][UNCERTAINTY], 0)
+        self.assertTrue(results.iloc[0][QUESTION])
+        self.assertEqual(parse.call_count, 2)
 
 
 if __name__ == '__main__':
