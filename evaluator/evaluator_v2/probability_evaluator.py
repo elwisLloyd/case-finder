@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Literal
 
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from evaluator.effort_evaluator import load_spec
 
@@ -130,17 +130,44 @@ question пустая. Не вычисляй метрики: их рассчит
 """
 
 
-def ask(client, model, schema, task, payload):
-    response = client.chat.completions.parse(
-        model=model,
-        messages=[{'role': 'system', 'content': SYSTEM + '\n' + task},
-                  {'role': 'user', 'content': json.dumps(payload, ensure_ascii=False)}],
-        response_format=schema,
-    )
-    message = response.choices[0].message
-    if message.refusal or message.parsed is None:
-        raise RuntimeError('ChatGPT не вернул структурированный ответ; отчёт не создан.')
-    return message.parsed
+def ask(client, model, schema, task, payload, validation_attempts=3):
+    """SDK не повторяет ошибки Pydantic: исправляем ответ отдельным запросом."""
+    if (not isinstance(validation_attempts, int) or isinstance(validation_attempts, bool)
+            or not 1 <= validation_attempts <= 5):
+        raise ValueError('validation_attempts должен быть целым от 1 до 5.')
+    correction = ''
+    for attempt in range(validation_attempts):
+        try:
+            response = client.chat.completions.parse(
+                model=model,
+                messages=[{'role': 'system', 'content': SYSTEM + '\n' + task + correction},
+                          {'role': 'user', 'content': json.dumps(payload, ensure_ascii=False)}],
+                response_format=schema,
+            )
+        except ValidationError as error:
+            # Передаём только пути полей и причины: не печатаем ответ модели или ТЗ.
+            errors = [{'field': '.'.join(map(str, item['loc'])), 'reason': item['msg']}
+                      for item in error.errors(include_input=False, include_url=False)]
+            details = json.dumps(errors, ensure_ascii=False)
+            if attempt + 1 == validation_attempts:
+                raise RuntimeError(
+                    f'ChatGPT не исправил ответ за {validation_attempts} попытки. '
+                    f'Ошибки валидации: {details}. Отчёт не создан.'
+                ) from None
+            print(f'Исправление ответа ChatGPT: попытка {attempt + 2}/{validation_attempts}')
+            correction = (
+                '\nПредыдущий ответ не прошёл валидацию: ' + details +
+                '\nВерни заново весь пакет. explicit допустим только при точечном '
+                'распределении (одна вероятность 1, остальные 0). Если остаётся '
+                'неопределённость, используй partial, сохрани обоснованное распределение '
+                'и задай уточняющий вопрос. Не делай оценку однозначной только ради '
+                'прохождения проверки. Проверь сумму вероятностей и обязательные поля.'
+            )
+            continue
+        message = response.choices[0].message
+        if message.refusal or message.parsed is None:
+            raise RuntimeError('ChatGPT не вернул структурированный ответ; отчёт не создан.')
+        return message.parsed
 
 
 def evaluate(client, model, menu, text, batch_size=6, max_spec_chars=180_000,
