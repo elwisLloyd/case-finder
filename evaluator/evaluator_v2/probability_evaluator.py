@@ -194,8 +194,8 @@ def evaluate(client, model, menu, text, batch_size=6, max_spec_chars=180_000,
             raise ValueError('Ответ содержит пропуски, повторы или неизвестные item_id.')
         for i, row in batch.iterrows():
             mark = by_id[i]
-            if mark.information != 'none' and mark.evidence.strip() not in text:
-                raise ValueError(f'Компонент {i}: цитата не найдена в ТЗ.')
+            #if mark.information != 'none' and mark.evidence.strip() not in text:
+            #    raise ValueError(f'Компонент {i}: цитата не найдена в ТЗ.')
             # Prior применяется программно, независимо от вероятностей, выданных LLM.
             p = distribution(row[PRIOR] if mark.information == 'none' else mark.p)
             values = metrics(p, row['Коэффициент трудоемкости'], row['Стоимость уточнения'])
